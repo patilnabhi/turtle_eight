@@ -6,6 +6,7 @@ from turtlesim.srv import TeleportAbsolute
 from math import sin, cos, tan, pi, sqrt, atan
 from turtlesim.msg import Pose
 
+# Function to publish velocity values to topic: 'turtle1/cmd_vel'
 
 def eight_tsim():
 	rospy.wait_for_service('turtle1/teleport_absolute')
@@ -14,8 +15,6 @@ def eight_tsim():
 
 	pub = rospy.Publisher('turtle1/cmd_vel', Twist)
 	T = rospy.get_param('~T')
-	# print T
-	# T = input("Enter T: ")
 	t0 = rospy.get_time()
 	t = 0
 
@@ -28,13 +27,18 @@ def eight_tsim():
 		twist.angular.x = 0
 		twist.angular.y = 0
 		twist.angular.z = get_input(t,T)[1]
-		print t
-		# rospy.loginfo(twist)
+		# print t
+		rospy.loginfo(twist)
 		pub.publish(twist)
+
+# Function to get the instantaneous velocities at time t
 
 def get_input(t,T):
 	# x = 3*sin(4*pi*t/T)
 	# y = 3*sin(2*pi*t/T)
+	
+	# Algorithm adopted from: Differential Flatness-Based Trajectory Planning for Multiple Unmanned Aerial Vehicles Using Mixed-Integer Linear Programming
+	# http://www2.engr.arizona.edu/~sprinkjm/research/c2wt/uploads/Main/paper4.pdf
 
 	x_dot = (12 * pi * cos(4*pi*t/T))/T
 	y_dot = (6 * pi * cos(2*pi*t/T))/T
@@ -45,17 +49,13 @@ def get_input(t,T):
 	linear_x = sqrt(x_dot**2 + y_dot**2)
 	angular_z = ((y_dot_dot * x_dot) - (x_dot_dot * y_dot))/((x_dot**2) + (y_dot**2))
 	
-	# linear_x = sqrt((12*pi*cos(4*pi*t/T)/T)**2 + (6*pi*cos(2*pi*t/T)/T)**2)
-	# theta = atan(cos(2*pi*t/T)/(2*cos(4*pi*t/T)))
-	# angular_z = (-pi*sin(2*pi*t/T)/(T*cos(4*pi*t/T)) + 2*pi*sin(4*pi*t/T)*cos(2*pi*t/T)/(T*cos(4*pi*t/T)**2))/(cos(2*pi*t/T)**2/(4*cos(4*pi*t/T)**2) + 1)
-
 	return [linear_x, angular_z]
 
-def callback(data):
-	print data
+# def callback(data):
+# 	print data
 
-def subscriber():
-	rospy.Subscriber('turtle1/pose', Pose, callback)
+# def subscriber():
+# 	rospy.Subscriber('turtle1/pose', Pose, callback)
 
 if __name__ == '__main__':
 	rospy.init_node('eight_tsim')
