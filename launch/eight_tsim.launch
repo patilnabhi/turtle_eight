@@ -1,0 +1,6 @@
+<launch>
+	<node name="turtlesim_node" pkg="turtlesim" type="turtlesim_node"/>
+	<!-- <node name="eight_tsim" pkg="turtle_8" type="pub_eight_tsim.py" > -->
+		<!-- <param name="T" value="" /> -->
+	<!-- </node> -->
+</launch>
