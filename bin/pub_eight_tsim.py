@@ -13,6 +13,8 @@ def eight_tsim():
 	turtle1_teleport = rospy.ServiceProxy('turtle1/teleport_absolute', TeleportAbsolute)
 	turtle1_teleport(5.54,5.54,0)
 
+	rate = rospy.Rate(100)
+
 	pub = rospy.Publisher('turtle1/cmd_vel', Twist)
 	T = rospy.get_param('~T')
 	t0 = rospy.get_time()
@@ -30,6 +32,7 @@ def eight_tsim():
 		# print t
 		rospy.loginfo(twist)
 		pub.publish(twist)
+		rate.sleep()
 
 # Function to get the instantaneous velocities at time t
 
